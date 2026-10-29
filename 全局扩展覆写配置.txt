@@ -1,0 +1,30 @@
+# Clash Verge Rev 全局扩展覆写（Merge）
+#
+# 这是“Merge”模式的局部配置，不是可以单独导入的完整 mihomo 配置。
+# 节点、代理组和端口由你的订阅/Clash Verge 管理；本文件只补充 DNS 与
+# TLS/HTTP 嗅探。请在 Clash Verge 的“全局扩展覆写配置”卡片中粘贴。
+
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  # 使用加密 DNS，避免把域名查询交给本地网络的明文 DNS。
+  nameserver:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+  fallback:
+    - https://1.0.0.1/dns-query
+    - https://8.8.8.8/dns-query
+  # 解析代理服务器自身域名时使用独立 DNS，避免 DNS 套娃。
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]

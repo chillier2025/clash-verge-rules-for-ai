@@ -1,0 +1,65 @@
+# 仅供学习和改造的 mihomo 示例；不能直接使用。
+# 请替换 <...> 占位符，并确认你有权使用相关节点和订阅。
+
+mixed-port: 7890
+allow-lan: false
+ipv6: true
+mode: rule
+unified-delay: true
+tcp-concurrent: true
+
+proxies:
+  - name: "入口-示例"
+    type: socks5
+    server: <ENTRY_HOST>
+    port: <ENTRY_PORT>
+    username: <ENTRY_USERNAME>
+    password: <ENTRY_PASSWORD>
+    udp: true
+  - name: "出口-示例"
+    type: socks5
+    server: <EXIT_HOST>
+    port: <EXIT_PORT>
+    username: <EXIT_USERNAME>
+    password: <EXIT_PASSWORD>
+    udp: true
+
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - 入口-示例
+      - 出口-示例
+      - DIRECT
+
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query
+
+sniffer:
+  enable: true
+  sniff:
+    TLS:
+      ports: [443, 8443]
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+
+rules:
+  - DOMAIN-SUFFIX,anthropic.com,PROXY
+  - DOMAIN-SUFFIX,claude.ai,PROXY
+  - DOMAIN-SUFFIX,openai.com,PROXY
+  - DOMAIN-SUFFIX,chatgpt.com,PROXY
+  - DOMAIN-SUFFIX,oaistatic.com,PROXY
+  - PROCESS-NAME-REGEX,(?i).*claude.*,PROXY
+  - PROCESS-NAME-REGEX,(?i).*codex.*,PROXY
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,DIRECT

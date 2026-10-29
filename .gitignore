@@ -1,0 +1,9 @@
+# Secrets and local Clash state
+*.secret
+*.key
+*.pem
+*.conf
+*.log
+config.local.*
+subscription.*
+.DS_Store
